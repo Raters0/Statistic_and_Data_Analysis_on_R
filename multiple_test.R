@@ -1,6 +1,6 @@
 #create positive test, return a matrix
 create_posi <- function(test_num=20,sample_size=3){
-  test_mean <- sample(seq(0.5,3,0.01),test_num,replace = T) #change sensitivity here!
+  test_mean <- sample(seq(1,3,0.01),test_num,replace = T) #change sensitivity here!
   test_sd <- sample(seq(0.2,2,0.01),test_num,replace = T)
   mean_vector <- rep(test_mean,sample_size)
   std_vector <- rep(test_sd,sample_size)
@@ -41,7 +41,7 @@ t_simulation <- function(pn,nn,tss=3,css=3){
   control_matrix <- create_nega(pn+nn,css)
   s_diff <- (((treatment_matrix[,'sd']^2)*(tss-1))+((control_matrix[,'sd']^2)*(css-1)))/(tss+css-2)  # two-sample t test
   t <- (treatment_matrix[,'mean'] - control_matrix[,'mean'])/sqrt(s_diff/tss+s_diff/css)
-  p <- 2*pt(-abs(t),df=tss+css-2)
+  p <- 2*pt(-abs(t),df=tss+css-2)  # two-sided t test
   return(list(p=p,treatment_matrix=treatment_matrix,control_matrix=control_matrix))
 }
 
@@ -102,9 +102,9 @@ Storey_method <- function(result_list,total_posi_names,fdr){
 }
 
 #main
-result <- t_simulation(4000,6000,3,3)
+result <- t_simulation(2000,8000,3,3)  # change sample size here
 p <- result$p  # positive/negative number >= 2
-total_posi <- rownames(result$treatment_matrix[1:4000,])  # return the names of true-positive tests 
+total_posi <- rownames(result$treatment_matrix[1:2000,])  # return the names of true-positive tests 
 hist(p,breaks=seq(0,1,0.01))
 
 # Bonferroni method
